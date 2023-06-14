@@ -6,6 +6,7 @@ map("i", "<F2>", "<Esc>:w<CR>", {})
 map("n", "<space>;", ":HopWord<CR>", {})
 map("n", "<space>l", ":HopChar1<CR>", {})
 map("n", "<space>k", ":HopVertical<CR>", {})
+map("n", "<space>j", ":HopWordCurrentLine<CR>", {})
 
 map("n", "<F12>", "ggVG", {})
 

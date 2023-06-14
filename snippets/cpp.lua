@@ -34,6 +34,9 @@ local cp = s(
 * Created:          {} 
 ******************************************************************************/
 #include <bits/stdc++.h>
+#ifdef ONPC
+#include<mydebug.h>
+#endif
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr);
 #define int long long
@@ -67,6 +70,9 @@ local Cp = s(
 * Created:          {} 
 ******************************************************************************/
 #include <bits/stdc++.h>
+#ifdef ONPC
+#include<mydebug.h>
+#endif
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr);
 #define int long long
