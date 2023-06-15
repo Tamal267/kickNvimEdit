@@ -199,10 +199,11 @@ local {} = {}
 -- Tutorial Snippets go here --
 
 local myFirstSnippet = s("myFirstSnippet", {
-    t("Hello, this is a snippet"),
+    t("Hello, this is a snippet "),
     i(1, " change here"),
     t({"", "this is a snippet also"}),
 })
+
 
 table.insert(snippets, myFirstSnippet)
 
@@ -224,7 +225,6 @@ local myFirstAutoSnippet = s( { trig = "digit(%d)(%d)" ,regTrig = true }, {
     rep(1),
     })
 table.insert(autosnippets, myFirstAutoSnippet)
-
 
 
 local forI = s({trig = "for([%w_])", regTrig = true, hidden = true },

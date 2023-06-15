@@ -34,9 +34,6 @@ local cp = s(
 * Created:          {} 
 ******************************************************************************/
 #include <bits/stdc++.h>
-#ifdef ONPC
-#include<mydebug.h>
-#endif
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr);
 #define int long long
@@ -70,9 +67,6 @@ local Cp = s(
 * Created:          {} 
 ******************************************************************************/
 #include <bits/stdc++.h>
-#ifdef ONPC
-#include<mydebug.h>
-#endif
 using namespace std;
 #define fastio ios::sync_with_stdio(false); cin.tie(nullptr);
 #define int long long
@@ -264,6 +258,13 @@ gen_random(l, r);
 ))
 
 table.insert(snippets, random)
+
+local MOD = s("MOD", {
+    t("#define mod "),
+    i(1, "1000000007"),
+})
+
+table.insert(snippets, MOD)
 -- End Refactoring --
 
 return snippets, autosnippets
