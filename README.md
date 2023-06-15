@@ -145,3 +145,29 @@ This requires:
 {'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 ```
 
+### Install CCLS language server:
+
+- Install ccls in Ubuntu
+
+```
+sudo snap install ccls --classic
+```
+
+Then add this to the `~/.ccls` file
+
+```
+ -isystem
+ /usr/include/c++/11
+ -isystem
+ /usr/include/x86_64-linux-gnu/c++/11
+ -isystem
+ /usr/include/c++/11/backward
+ -isystem
+ /usr/lib/gcc/x86_64-linux-gnu/11/include
+ -isystem
+ /usr/local/include
+ -isystem
+ /usr/include/x86_64-linux-gnu
+ -isystem
+ /usr/include
+```
