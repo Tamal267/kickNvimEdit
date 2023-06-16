@@ -135,62 +135,25 @@ for(int {} = 0; {} < {}; {}++){{
 table.insert(snippets, cp)
 table.insert(snippets, Cp)
 table.insert(snippets, Date)
-table.insert(autosnippets, myFirstSnippet)
-
-local graph_class = s("graph_class", fmt(
-[[
-struct Edge{{
-	int src;
-	int des;
-}};
-
-struct Graph{{
-	vector< vector<int> > adjList;
-	Graph(const vector<Edge> &edges, int n){{
-		adjList.resize(n);
-		for(const Edge& i:edges){{
-			adjList[i.src].push_back(i.des);
-			adjList[i.des].push_back(i.src);
-		}}
-	}}
-	Graph(const vector<vector<int>> &adjlist){{
-		adjList = adjlist;
-	}}
-}};
-{}
-]],
-{
-    i(1, ""),
-}
-))
-
-table.insert(snippets, graph_class)
 
 local bfs_algorithm = s("bfs_algorithm", fmt(
 [[
 vector<bool>visited(1000,false);
 
-vector<int> bfs(const Graph &graph, int start, int target = -1){{
-	int n = graph.adjList.size();
-	vector<int>order;
+vector<int> bfs(int start, int target = -1){{
 	queue<int>q;
 	q.push(start);
 	visited[start] = true;
 	while(!q.empty()){{
 		int u = q.front();
 		q.pop();
-		order.push_back(u);
-		for(int i:graph.adjList[u]){{
+		for(int i:adj[u]){{
 			if(!visited[i]){{
 				visited[i] = true;
 				q.push(i);
 			}}
 		}}
 	}}
-	if(target!=-1){{
-		if(!visited[target]) return {{}};
-	}}
-	return order;
 }}
 {}
 ]],
@@ -265,6 +228,220 @@ local MOD = s("MOD", {
 })
 
 table.insert(snippets, MOD)
+
+local DisjointSet = s("DisjointSet", fmt(
+[[
+class DisjointSet{{
+    vector<int> rank, parent;
+public:
+    DisjointSet(int n){{
+        rank.resize(n+1, 0);
+        parent.resize(n+2);
+        for(int i=0;i<=n;i++) parent[i] = i;
+    }}
+    int findUPar(int u){{
+        return parent[u] == u ? u : parent[u] = findUPar(parent[u]);
+    }}
+    void unionByRank(int u, int v){{
+        int uP = findUPar(u);
+        int vP = findUPar(v);
+        if(parent[uP] == parent[vP]) return;
+        if(rank[uP] < rank[vP]) parent[uP] = vP;
+        else if(rank[uP] > rank[vP]) parent[vP] = uP;
+        else parent[vP] = uP, rank[uP]++;
+    }}
+}};
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, DisjointSet)
+
+
+local Krushkal = s("Krushkal", fmt(
+[[
+vector<pair<int, pair<int, int>>> Krushkal(vector<pair<int, pair<int, int>>> &edges, int n){{
+    sort(edges.begin(), edges.end());
+    vector<pair<int, pair<int, int>>> ans;
+    DisjointSet D(n);
+    for(auto it:edges){{
+        if(D.findUPar(it.second.first) != D.findUPar(it.second.second)){{
+            ans.push_back({{it.first, {{it.second.first, it.second.second}}}});
+            D.unionByRank(it.second.first, it.second.second);
+        }}
+    }}
+    return ans;
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Krushkal);
+
+local Prims = s("Prims", fmt(
+[[
+void Prims(int start){{
+    // map<int, vector<pair<int, int>>> adj, ans;
+    priority_queue<pair<int, pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>> > pq;
+    pq.push({{0, {{start, -1}}}});
+    while(!pq.empty()){{
+        auto it = pq.top();
+        pq.pop();
+        int wt = it.first;
+        int u = it.second.first;
+        int v = it.second.second;
+        if(visited[u]) continue;
+        visited[u] = 1;
+        if(v!=-1) ans[u].push_back({{v, wt}});
+        for(pair<int, int> i:adj[u]){{
+            int adjWt = i.second;
+            int adjNode = i.first;
+            if(!visited[adjNode]) pq.push({{adjWt, {{adjNode, u}}}});
+        }}
+    }}
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Prims);
+
+local MillerRabin = s("MillerRabin", fmt(
+[[
+using u64 = uint64_t;
+using u128 = __uint128_t;
+
+u64 binpower(u64 base, u64 e, u64 mod) {{
+    u64 result = 1;
+    base %= mod;
+    while (e) {{
+        if (e & 1) result = (u128)result * base % mod;
+        base = (u128)base * base % mod;
+        e >>= 1;
+    }}
+    return result;
+}}
+
+bool check_composite(u64 n, u64 a, u64 d, int s) {{
+    u64 x = binpower(a, d, n);
+    if (x == 1 || x == n - 1) return false;
+    for (int r = 1; r < s; r++) {{
+        x = (u128)x * x % n;
+        if (x == n - 1) return false;
+    }}
+    return true;
+}};
+
+bool MillerRabin(u64 n, int iter=5) {{ // returns true if n is probably prime, else returns false.
+    if (n < 4) return n == 2 || n == 3;
+    int s = 0;
+    u64 d = n - 1;
+    while ((d & 1) == 0) {{
+        d >>= 1;
+        s++;
+    }}
+
+    for (int i = 0; i < iter; i++) {{
+        int a = 2 + rand() % (n - 3);
+        if (check_composite(n, a, d, s)) return false;
+    }}
+    return true;
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, MillerRabin);
+
+local Sieve = s("Sieve", fmt(
+[[
+int N = 1000005;
+vector<bool> is_prime(N+1, true);
+void Sieve() {{
+    is_prime[0] = is_prime[1] = false;
+    for (int i = 2; i <= N; i++) {{
+        if (is_prime[i] && (long long)i * i <= N) {{
+            for (int j = i * i; j <= N; j += i) is_prime[j] = false;
+        }}
+    }}
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Sieve);
+
+local BitManip = s("BitManip", fmt(
+[[
+#define SetBit(x, k) (x |= (1LL << k))
+#define ClearBit(x, k) (x &= ~(1LL << k))
+#define CheckBit(x, k) ((x>>k)&1)
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, BitManip);
+
+local SegmentTree = s("SegmentTree", fmt(
+[[
+constexpr int N = 100005;
+int arr[N], seg[N];
+
+void build(int ind, int low, int high){{
+    if(low == high){{
+        seg[ind] = arr[low];
+        return ;
+    }}
+    int mid = (low + high) / 2;
+    build(2*ind+1, low, mid);
+    build(2*ind+2, mid+1, high);
+    seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+}}
+int query(int ind, int low, int high, int l, int r){{
+    if(low >= l && high <= r) return seg[ind];
+    if(low > r || high < l) return 0;
+    int mid = (low + high) / 2;
+    int left = query(2*ind+1, low, mid, l, r);
+    int right = query(2*ind+2, mid+1, high, l, r);
+    return left + right;
+}}
+void update(int ind, int low, int high, int node, int val){{
+    if(low == high) {{
+        seg[ind] = val;
+        return;
+    }}
+    int mid = (low + high) / 2;
+    if(low <= node && node <= mid) update(2*ind+1, low, mid, node, val);
+    else update(2*ind+2, mid+1, high, node, val);
+    seg[ind] = seg[2*ind+1] + seg[2*ind+2];
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, SegmentTree);
+
 -- End Refactoring --
 
 return snippets, autosnippets
