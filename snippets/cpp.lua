@@ -138,18 +138,17 @@ table.insert(snippets, Date)
 
 local bfs_algorithm = s("bfs_algorithm", fmt(
 [[
-vector<bool>visited(1000,false);
 
 vector<int> bfs(int start, int target = -1){{
 	queue<int>q;
 	q.push(start);
-	visited[start] = true;
+	vis[start] = true;
 	while(!q.empty()){{
 		int u = q.front();
 		q.pop();
 		for(int i:adj[u]){{
-			if(!visited[i]){{
-				visited[i] = true;
+			if(!vis[i]){{
+				vis[i] = true;
 				q.push(i);
 			}}
 		}}
@@ -296,13 +295,13 @@ void Prims(int start){{
         int wt = it.first;
         int u = it.second.first;
         int v = it.second.second;
-        if(visited[u]) continue;
-        visited[u] = 1;
+        if(vis[u]) continue;
+        vis[u] = 1;
         if(v!=-1) ans[u].push_back({{v, wt}});
         for(pair<int, int> i:adj[u]){{
             int adjWt = i.second;
             int adjNode = i.first;
-            if(!visited[adjNode]) pq.push({{adjWt, {{adjNode, u}}}});
+            if(!vis[adjNode]) pq.push({{adjWt, {{adjNode, u}}}});
         }}
     }}
 }}
@@ -442,6 +441,87 @@ void update(int ind, int low, int high, int node, int val){{
 
 table.insert(snippets, SegmentTree);
 
+local Dijkstra = s("Dijkstra", fmt(
+[[
+void Dijkstra(int start){{
+    // map<int, vector<pair<int, int>>> adj;
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>> > pq;
+    pq.push({{0, start}});
+    while(!pq.empty()){{
+        auto it = pq.top();
+        pq.pop();
+        int wt = it.first;
+        int u = it.second;
+        if(vis[u]) continue;
+        vis[u] = 1;
+        for(pair<int, int> i:adj[u]){{
+            int adjWt = i.second;
+            int adjNode = i.first;
+            if(dist[adjNode] > wt + adjWt) {{
+                dist[adjNode] = wt + adjWt;
+                pq.push({{dist[adjNode], adjNode}});
+            }}
+        }}
+    }}
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Dijkstra);
+
+local SieveOf = s("SieveOf", fmt(
+[[
+int Prime[N+4], kk;
+bool notPrime[N+5];
+void SieveOf(){{
+    notPrime[1] = true;
+    Prime[kk++] = 2;
+    for(int i=4;i<=N;i+=2) notPrime[i] = true;
+    for(int i=3;i<=N;i+=2){{
+        if(!notPrime[i]){{
+            Prime[kk++] = i;
+            for(int j=i*i; j<=N; j+=2*i) notPrime[j] = true;
+        }}
+    }}
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, SieveOf);
+
+local Divisors = s("Divisors", fmt(
+[[
+int Divisors(int n){{
+    int sum = 1;
+    for(int i=0;i<=N && Prime[i]*Prime[i] <= n; i++){{
+        if(n%Prime[i] == 0){{
+            int k = 0;
+            while(n%Prime[i] == 0) {{
+                k++;
+                n/=Prime[i];
+            }}
+            sum *= (k+1);
+        }}
+    }}
+    if(n!=1) sum *= 2;
+    return sum;
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Divisors);
 -- End Refactoring --
 
 return snippets, autosnippets

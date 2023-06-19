@@ -152,8 +152,9 @@ This requires:
 ```
 sudo snap install ccls --classic
 ```
+Then find all the directories where header files included run the command `g++ -E -x c++ - -v < /dev/null` and copy all the directories showing after `#include <...> search starts here:` and add these lines to the ~/.ccls file with `-isystem` for every location.
 
-Then add this to the `~/.ccls` file
+Ex - For Ubuntu, add these lines to the `~/.ccls` file.
 
 ```
  -isystem
