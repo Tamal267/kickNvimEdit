@@ -522,6 +522,95 @@ int Divisors(int n){{
 ))
 
 table.insert(snippets, Divisors);
+
+local Monotonic_stack = s("Monotonic_stack", fmt(
+[[
+for(int i=n-1;i>=0;i--){{
+    while(!stk.empty() && v[i] >= v[stk.top()]) stk.pop();
+    ind[i] = stk.empty() ? -1 : stk.top();
+    stk.push(i);
+}}
+// 3 1 5 4 10
+// 2 2 4 4 -1
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, Monotonic_stack);
+
+local lcs = s("lcs", fmt(
+[[
+void lcs(string s1, string s2){{
+    int n = s1.size(), m = s2.size();
+    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
+    for(int i=0;i<n;i++) dp[i][0] = 0;
+    for(int j=0;j<m;j++) dp[0][j] = 0;
+    for(int i=1;i<=n;i++){{
+        for(int j=1;j<=m;j++){{
+            if(s1[i-1] == s2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
+            else dp[i][j] = 0 + max(dp[i-1][j], dp[i][j-1]);
+        }}
+    }}
+    int len = dp[n][m], ind = len - 1;
+    string ans(len, '$');
+    int i = n, j = m;
+    while(i>0 && j>0){{
+        if(s1[i-1] == s2[j-1]) ans[ind] = s1[i-1], ind--, i--, j--;
+        else if(s1[i-1] > s2[j-1]) i--;
+        else j--;
+    }}
+    cout<<ans<<"\n";
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, lcs);
+
+local lis = s("lis", fmt(
+[[
+void lis(vector<int> &v){{
+    int n = v.size();
+    vector<int> dp(n+1, 1), hash(n);
+    int mx = 1, lastInd = 0;
+    for(int i=0;i<n;i++){{
+        hash[i] = i;
+        for(int prev=0; prev<i;prev++){{
+            if(v[i] > v[prev] && 1 + dp[prev] > dp[i]){{
+                dp[i] = 1 + dp[prev];
+                hash[i] = prev;
+            }}
+        }}
+        if(mx < dp[i]){{
+            mx = dp[i];
+            lastInd = i;
+        }}
+    }}
+    vector<int> printSeq;
+    printSeq.push_back(v[lastInd]);
+    while(hash[lastInd] != lastInd){{
+        lastInd = hash[lastInd];
+        printSeq.push_back(v[lastInd]);
+    }}
+    reverse(printSeq.begin(), printSeq.end());
+    cout<<mx<<"\n";
+    for(int i:printSeq) cout<<i<<" ";
+    cout<<"\n";
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, lis);
 -- End Refactoring --
 
 return snippets, autosnippets
