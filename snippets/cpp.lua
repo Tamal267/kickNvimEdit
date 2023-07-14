@@ -541,38 +541,6 @@ for(int i=n-1;i>=0;i--){{
 
 table.insert(snippets, Monotonic_stack);
 
-local lcs = s("lcs", fmt(
-[[
-void lcs(string s1, string s2){{
-    int n = s1.size(), m = s2.size();
-    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));
-    for(int i=0;i<n;i++) dp[i][0] = 0;
-    for(int j=0;j<m;j++) dp[0][j] = 0;
-    for(int i=1;i<=n;i++){{
-        for(int j=1;j<=m;j++){{
-            if(s1[i-1] == s2[j-1]) dp[i][j] = 1 + dp[i-1][j-1];
-            else dp[i][j] = 0 + max(dp[i-1][j], dp[i][j-1]);
-        }}
-    }}
-    int len = dp[n][m], ind = len - 1;
-    string ans(len, '$');
-    int i = n, j = m;
-    while(i>0 && j>0){{
-        if(s1[i-1] == s2[j-1]) ans[ind] = s1[i-1], ind--, i--, j--;
-        else if(s1[i-1] > s2[j-1]) i--;
-        else j--;
-    }}
-    cout<<ans<<"\n";
-}}
-{}
-]],
-{
-    i(1, ""),
-}
-))
-
-table.insert(snippets, lcs);
-
 local lis = s("lis", fmt(
 [[
 void lis(vector<int> &v){{
@@ -611,6 +579,45 @@ void lis(vector<int> &v){{
 ))
 
 table.insert(snippets, lis);
+
+local lcs = s("lcs", fmt(
+[[
+string s,t;
+vector<vector<int>>dp(3003, vector<int>(3003, -1));
+vector<vector<int>>mark(3003, vector<int>(3003));
+
+int f(int i, int j){{
+    if(i<0 || j<0) return 0;
+    if(dp[i][j] != -1) return dp[i][j];
+    int res = 0;
+    if(s[i] == t[j]) {{
+        mark[i][j] = 1;
+        res = 1 + f(i-1, j-1);
+    }}
+    else {{
+        int iC = f(i-1,j);
+        int jC = f(i,j-1);
+        if(iC > jC) mark[i][j] = 2;
+        else mark[i][j] = 3;
+        res = max(iC, jC);
+    }}
+    return dp[i][j] = res;
+}}
+
+void printWay(int i, int j){{
+    if(i<0 || j<0) return;
+    if(mark[i][j] == 1) printWay(i-1, j-1) , cout<<s[i];
+    else if(mark[i][j] == 2) printWay(i-1, j);
+    else if(mark[i][j] == 3) printWay(i, j-1);
+}}
+{}
+]],
+{
+    i(1, ""),
+}
+))
+
+table.insert(snippets, lcs);
 -- End Refactoring --
 
 return snippets, autosnippets
